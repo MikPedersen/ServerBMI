@@ -73,26 +73,28 @@ public class MultiThreadServer extends Application {
         public void run() {
             try {
                 // Create data input and output streams
-                DataInputStream inputFromClient = new DataInputStream(
+                DataInputStream inputWeight = new DataInputStream(
+                        socket.getInputStream());
+                DataInputStream inputHeight = new DataInputStream(
                         socket.getInputStream());
                 DataOutputStream outputToClient = new DataOutputStream(
                         socket.getOutputStream());
 
                 // Continuously serve the client
                 while (true) {
-                    // Receive radius from the client
-                    double radius = inputFromClient.readDouble();
+                    // Receive weight and height from the client
+                    double weight = inputWeight.readDouble();
+                    double height = inputHeight.readDouble();
+                    // Compute bmi
+                    double bmi = weight / (height*height);
 
-                    // Compute area
-                    double area = radius * radius * Math.PI;
-
-                    // Send area back to the client
-                    outputToClient.writeDouble(area);
+                    // Send bmi back to the client
+                    outputToClient.writeDouble(bmi);
 
                     Platform.runLater(() -> {
-                        ta.appendText("radius received from client: " +
-                                radius + '\n');
-                        ta.appendText("Area found: " + area + '\n');
+                        ta.appendText("Weight received from client: "
+                                + weight + '\n' + "Height received from client: " + height + '\n');
+                        ta.appendText("BMI is: " + bmi + '\n');
                     });
                 }
             }
